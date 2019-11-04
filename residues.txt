@@ -1,0 +1,156 @@
+private boolean completeBlack(Mat m ,double percent){  
+		int  s=m.cols()*m.rows();
+		int c=0;
+			for (int A = 0; A < m.rows(); A++) {
+				for (int B = 0; B < m.cols(); B++) {
+					double[] d = m.get(A,B);
+					if (d[0] >= whiteContantUp && d[1] >= whiteContantUp && d[2] >= whiteContantUp) {
+						c++;
+						}
+				}}
+			System.out.println("percent == "+percent);
+			if(((double)(s-c)/s)*100>=percent)
+				
+			return true;
+			return false;
+			}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ private String loadChar(File file) {
+	String c="";
+	try {
+		FileInputStream in= new FileInputStream(file);
+		int i;
+		try {
+			while ((i=in.read())!=-1){
+			c=c+(char)i;	
+			}
+			return c;
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			return c;
+		}
+		
+		
+	} catch (FileNotFoundException e) {
+		
+		e.printStackTrace();
+		return  c;
+	}
+	 
+}
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ private Point start(Mat page) {
+	Point p = new Point(-1, -1);
+	for (int x = 0; x < page.cols(); x++) {
+		if (notWhite(page.col(x))) {
+			p.x = x;
+			break;
+		}
+		;
+	}
+	for (int y = 0; y < page.rows(); y++) {
+		if (notWhite(page.row(y))) {
+			p.y = y;
+			;
+			break;
+		}
+		;
+	}
+
+	return p;
+
+} 
+ 
+ 
+ 
+ 
+ 
+ 
+ private ObservableList<ImageView>loadImage() throws Exception {
+	// Loading the OpenCV core library
+	 Mat ch= page;
+	 
+	List<Rect> chs = new ArrayList();
+ 
+	
+	// inndPoint(ch, chs);
+	 ObservableList<ImageView> iv= FXCollections.<ImageView>observableArrayList();
+	//inndPoint(ch, r);
+	 for(Rect r:chs) {
+	 Mat s= new Mat();
+	s = ch.submat(r.y, r.y + r.height, r.x, r.x + r.width);
+	s=trimMat (s);
+	 WritableImage writableImage =  writableImage(s);
+	// WritableImage writableImage = capureFrame();
+	// Setting the image view
+	ImageView imageView = new ImageView(writableImage);
+	// Setting the position of the image
+	 
+	 
+ 
+	// Setting the preserve ratio of the image view
+	imageView.setPreserveRatio(true);
+	iv.add(imageView);
+	 
+	
+	}
+	 	return iv;
+}
+ 
+ private int loadLine(List<Rect> rect,int y0){
+	int h=0;
+	List<Rect> line= new ArrayList();
+	 
+	if(this.page!=null) {
+		for (int s = y0; s < page.rows(); s++) {
+			if (notWhite(page.col(s))) {
+			 
+			for(int e = s+1; e < page.rows(); e++) {
+				if(!notWhite(page.col(e))) {
+					rect.add(new Rect(0,s,page.cols(),e));
+					loadLine(rect,e+1);
+					break;
+				}
+			}
+			break;
+			}
+			 
+		}
+		
+	}
+
+return 0;	
+}
+
+ 
+ 
+ 
+ 
+ private WritableImage writableImage(Mat ch) throws Exception {
+	MatOfByte matOfByte = new MatOfByte();
+	if(!ch.empty())
+	Imgcodecs.imencode(".png", ch, matOfByte);
+	else return null;
+byte[] byteArray = matOfByte.toArray();
+InputStream in = new ByteArrayInputStream(byteArray);
+BufferedImage bufImage = ImageIO.read(in);
+WritableImage writableImage = SwingFXUtils.toFXImage(bufImage, null);
+	return writableImage;
+}
+ 
